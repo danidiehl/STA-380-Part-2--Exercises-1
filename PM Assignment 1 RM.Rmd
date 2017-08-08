@@ -1,0 +1,114 @@
+---
+title: "PM Assignment 1"
+author: "Dani Diehl"
+date: "August 6, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Probability Practice 
+### Part A
+
+![Part A](/Users/danid/Pictures/ProbPracticePartA.jpg)
+
+### Part B
+
+![Part A](/Users/danid/Pictures/ProbPracticePartB.jpg)
+
+## Exploratory Analysis: green buildings
+
+```{r}
+gb<-read.csv("greenbuildings.csv")
+basic<-lm(gb$Rent~gb$green_rating)
+summary(basic)
+```
+When looking at the output from the simple regression of Rent on green rating, the green rating variable appears to be significant. Because the coefficient is positive, we might assume that green buildings have higher rents. However, we must control for other variables that may be the true reason behind the underlying effect. 
+
+```{r}
+summary(lm(Rent~.,data=gb))
+```
+When looking at the output of the regression of Rent on all of the variables in the dataset, green rating does not appear to be significant. This means that holding all other variables constant, green rating may not have an impact on the rent charged. From this output, other variables, including electricity and gas costs, the class of the building, the size, and the employment growth rate of the region, seem to be more important in predicting the rent.
+
+```{r}
+boxplot(gb$Rent~gb$green_rating, pch=19, col='pink',xlab='Green Rating',ylab='Rent')
+```
+
+```{r}
+boxplot(gb$leasing_rate~gb$green_rating, col="gold",xlab='Green Rating',ylab='Leasing Rate')
+```
+Green buildings have a higher median leasing rate and less low leasing rate outliers. This could mean that a higher percentage of green buildings are leased out to tenants, perhaps due to people wanting to be environmentally friendly or the perception that more work gets done in naturally lit facilities. 
+```{r}
+library(ggplot2)
+t<-ggplot(gb,aes(x=cluster, y=Rent))
+t+geom_point(aes(color=green_rating))
+```
+By graphing cluster on the x-axis and Rent on the y-axis, we attempt to control for other factors that may be influencing the rent. Clusters were made based on buildings located in the same geographical region. As you can see from the graph, the green buildings (shown in light blue) are not near the top of the rent for each cluster. Green buildings may have higher rent on average, but when limited to clusters, they do not appear to have the highest rent.
+```{r cars}
+summary(cars)
+```
+
+## Bootstrapping
+
+1. Characterize risk/return properties of US domestic equities (SPY: the S&P 500 stock index), US Treasury bonds (TLT), Investment-grade corporate bonds (LQD), Emerging-market equities (EEM), and Real estate (VNQ).
+
+
+```{r}
+library(mosaic)
+library(quantmod) #stock info mod
+library(foreach)
+
+
+mystocks = c("SPY", "TLT", "LQD","EEM","VNQ")
+getSymbols(mystocks) #goes on yahoo finance, downloads data
+
+for(ticker in mystocks) {
+  expr = paste0(ticker, "a = adjustOHLC(", ticker, ")")
+  eval(parse(text=expr))
+}
+
+SPYa_returns = as.matrix(na.omit(ClCl(SPYa)))
+SPYReturnAvg=mean(SPYa_returns)
+SPYReturnSD=sd(SPYa_returns)
+spy=c(SPYReturnAvg,SPYReturnSD)
+
+TLTa_returns = as.matrix(na.omit(ClCl(TLTa)))
+TLTReturnAvg=mean(TLTa_returns)
+TLTReturnSD=sd(TLTa_returns)
+tlt=c(TLTReturnAvg,TLTReturnSD)
+
+LQDa_returns = as.matrix(na.omit(ClCl(LQDa)))
+LQDReturnAvg=mean(LQDa_returns)
+LQDReturnSD=sd(LQDa_returns)
+lqd=c(LQDReturnAvg,LQDReturnSD)
+
+EEMa_returns = as.matrix(na.omit(ClCl(EEMa)))
+EEMReturnAvg=mean(EEMa_returns)
+EEMReturnSD=sd(EEMa_returns)
+eem=c(EEMReturnAvg,EEMReturnSD)
+
+VNQa_returns = as.matrix(na.omit(ClCl(VNQa)))
+VNQReturnAvg=mean(VNQa_returns)
+VNQReturnSD=sd(VNQa_returns)
+vnq=c(VNQReturnAvg,VNQReturnSD)
+
+df<-data.frame(spy,tlt,lqd,eem,vnq)
+rownames(df)<-c('Avg Return', 'SD Return')
+df
+```
+As you can see from the above dataframe, the Emerging-market equities has the highest expected return, but also the highest standard deviation. Therefore, EEM is the riskiest of the above ETFs. The Investment-grade corporate bonds have the lowest average return and also the lowest standard deviation. These facts make LQD the safest choice as an investment, but you have a smaller chance of making a larger return. US domestic equities and US Treasury bonds (SPY and TLT) are also relatively safe investments, with low risk but relatively low returns. Real estate (VNQ) has the second highest average return and the second highest standard deviation as well, making it safer than EEM but riskier than the rest. 
+
+
+2. Outline our choice of safe and aggressive portfolios. 
+
+3. Use bootstrap resampling to estimate the 4-week (20 trading day) value at risk of each of your three portfolios at the 5% level.
+
+4. Compare the results for each portfolio in a way that would allow the reader to make an intelligent decision among the three options.
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Market Segmentation
+
+```{r}
