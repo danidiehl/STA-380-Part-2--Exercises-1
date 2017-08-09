@@ -40,6 +40,7 @@ When looking at the output of the regression of Rent on all of the variables in 
 ```{r}
 boxplot(gb$Rent~gb$green_rating, pch=19, col='pink',xlab='Green Rating',ylab='Rent')
 ```
+Green buildings have a slightly higher median rent than non-green buildings. However, the range of the rent of green buildings is much smaller than the range of rent of non-green buildings. Non-green buildings seem to have more outliers with very high rent. We must dig deeper into other factors that could be contributing to the difference in rent.
 
 ```{r}
 boxplot(gb$leasing_rate~gb$green_rating, col="gold",xlab='Green Rating',ylab='Leasing Rate')
@@ -155,7 +156,6 @@ all_returns1 = cbind(	ClCl(SPYa),
                      ClCl(EEMa),
                      ClCl(VNQa))
 all_returns1 = as.matrix(na.omit(all_returns1))
-head(all_returns1)
 
 # Now simulate many different possible scenarios  
 initial_wealth = 100000
@@ -167,10 +167,11 @@ sim1 = foreach(i=1:5000, .combine='rbind') %do% {
   wealthtracker = rep(0, n_days)
   for(today in 1:n_days) {
     return.today = resample(all_returns1, 1, orig.ids=FALSE)
-    holdings = holdings + holdings*return.today #does this redistribute?
+    holdings = holdings + holdings*return.today 
     total_wealth = sum(holdings)
     wealthtracker[today] = total_wealth
     holdings = weights * total_wealth 
+    holdingstracker[today] = holdings
   }
   wealthtracker
 }
@@ -185,7 +186,6 @@ all_returns2 = cbind(	ClCl(SPYa),
                       ClCl(TLTa),
                       ClCl(LQDa))
 all_returns2 = as.matrix(na.omit(all_returns2))
-head(all_returns2)
 
 # Now simulate many different possible scenarios  
 initial_wealth = 100000
@@ -214,7 +214,6 @@ safeVAR=quantile(sim2[,n_days], 0.05) - initial_wealth
 all_returns3 = cbind(ClCl(EEMa),
                       ClCl(VNQa))
 all_returns3 = as.matrix(na.omit(all_returns3))
-head(all_returns3)
 
 # Now simulate many different possible scenarios  
 initial_wealth = 100000
@@ -245,28 +244,25 @@ In the dataframe labeled df2, you can see the value at risk at the 5% level for 
 
 ```{r}
 
-s1d=sd(sim1[,n_days]) #sd of values at the end of the 20 days
-mean1=mean(sim1[,n_days]) #100800.4
+sd1=sd(sim1[,n_days]) #5655.20
+mean1=mean(sim1[,n_days]) #100907.62
 
 equal_confint= range(mean1-2*sd1, mean1+2*sd1)
 
-sd2=sd(sim2[,n_days]) #sd of values at the end of the 20 days
-sd2 #2295.886 (smaller than sd1--less range) 
-mean2=mean(sim2[,n_days]) #100551 (less than mean1)
+sd2=sd(sim2[,n_days]) #2277.48 (smaller than sd1--less range) 
+mean2=mean(sim2[,n_days]) #100522 (less than mean1)
 safe_confint= range(mean2-2*sd2,mean2+2*sd2)
 
 
-sd3=sd(sim3[,n_days]) #sd of values at the end of the 20 days
-sd3 #14927 (much bigger variation) 
-mean3=mean(sim3[,n_days]) #101817 (much more than others)
+sd3=sd(sim3[,n_days]) #14884 (much bigger variation) 
+mean3=mean(sim3[,n_days]) #101533 (much more than others)
 agg_confint=range(mean3-2*sd3, mean3+2*sd3)
 
 df3<-rbind(equal_confint,safe_confint,agg_confint)
 df3
 
 ```
-In the dataframe above, you can see the 95% confidence intervals for the total wealth one is expected to have after investing $100,000 into the equal, safe, and aggressive portfolios for 20 trading days. Readers will be able to look at this dataframe, see the potential for both loss and gain in each portfolio, and make a decision based on these facts. By computing the expected gain, expected standard deviation, and 95% confidence interval, readers will have a good idea about the risk-reward tradeoff for each portfolio.
-
+In the dataframe above, you can see the 95% confidence intervals for the total wealth one is expected to have after investing $100,000 into the equal, safe, and aggressive portfolios for 20 trading days. The 95% confidence interval for the equal split porfolio is [89597, 112218]. The 95% confidence interval for the safe portfolio is [95967, 105077]. The 95% confidence interval for the aggressive portfolio is [71764,131301]. Readers will be able to look at this information, see the potential for both loss and gain in each portfolio, and make a decision based on these facts. By computing the expected gain, expected standard deviation, and 95% confidence interval, readers will have a good idea about the risk-reward tradeoff for each portfolio.
 
 ## Market Segmentation
 
