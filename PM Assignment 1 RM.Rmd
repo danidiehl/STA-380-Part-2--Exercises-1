@@ -14,9 +14,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![Part A](/Users/danid/Pictures/ProbPracticePartA.jpg)
 
+As shown by the math above, the fraction of people who are truthful clickers and answered "Yes" is 5/7. 
 ### Part B
 
 ![Part A](/Users/danid/Pictures/ProbPracticePartB.jpg)
+
+As shown by the math above, the probability of having the disease after testing positive is 19.9%. This means the test is not a particularly good indicator of having the disease and that the test is giving a lot of False Positives. If a universal testing policy were implemented, additional screening and testing would need to be done on those who tested positive to further confirm whether or not they have the disease. 
 
 ## Exploratory Analysis: green buildings
 
@@ -24,6 +27,7 @@ knitr::opts_chunk$set(echo = TRUE)
 gb<-read.csv("greenbuildings.csv")
 basic<-lm(gb$Rent~gb$green_rating)
 summary(basic)
+
 ```
 When looking at the output from the simple regression of Rent on green rating, the green rating variable appears to be significant. Because the coefficient is positive, we might assume that green buildings have higher rents. However, we must control for other variables that may be the true reason behind the underlying effect. 
 
@@ -31,6 +35,7 @@ When looking at the output from the simple regression of Rent on green rating, t
 summary(lm(Rent~.,data=gb))
 ```
 When looking at the output of the regression of Rent on all of the variables in the dataset, green rating does not appear to be significant. This means that holding all other variables constant, green rating may not have an impact on the rent charged. From this output, other variables, including electricity and gas costs, the class of the building, the size, and the employment growth rate of the region, seem to be more important in predicting the rent.
+
 
 ```{r}
 boxplot(gb$Rent~gb$green_rating, pch=19, col='pink',xlab='Green Rating',ylab='Rent')
@@ -46,6 +51,40 @@ t<-ggplot(gb,aes(x=cluster, y=Rent))
 t+geom_point(aes(color=green_rating))
 ```
 By graphing cluster on the x-axis and Rent on the y-axis, we attempt to control for other factors that may be influencing the rent. Clusters were made based on buildings located in the same geographical region. As you can see from the graph, the green buildings (shown in light blue) are not near the top of the rent for each cluster. Green buildings may have higher rent on average, but when limited to clusters, they do not appear to have the highest rent.
+```{r}
+library(ggplot2)
+
+ggplot(gb,aes(x=age, y=Rent))+geom_point(aes(color=green_rating)) + facet_wrap(~green_rating)
+
+```
+Green buildings exhibit the same decline in rent with increase in age.
+
+```{r}
+gb.scrubbed <- gb[gb$leasing_rate<10,]
+nrow(gb.scrubbed)
+nrow(gb.scrubbed[gb.scrubbed$green_rating==0,])
+
+gb.missingscrubbed <- gb[gb$leasing_rate>10,]
+basic.missingscrubbed <-lm(gb.missingscrubbed$Rent~gb.missingscrubbed$green_rating)
+summary(basic.missingscrubbed)
+summary(lm(Rent~.,data=gb.missingscrubbed))
+
+```
+When performing the same analysis on the scrubbed data that the analyst in the scenario used (ie Leasing Rate > 10%), we see the same results as above. Of the 215 buildings that had less than 10% occupancy, only one of them is a green building. Removing these buildings could have distorted the analysis and biased the data. 
+```{r}
+factorclass <- ifelse(gb$class_a==0, "class b", "class a")
+gb$factorclass = factorclass
+
+ggplot(gb,aes(x=age, y=Rent))+geom_point(aes(color=green_rating)) + facet_wrap(~factorclass)
+ggplot(gb,aes(Rent)) + geom_histogram() + facet_wrap(~green_rating)
+```
+
+
+Through the above exploratory analysis, we can see that the analysis performed by on-staff stats guru is flawed in the following ways:
+* Filtering out buildings with low occupancy rates effectively removed 214 non-green buildings and 1 green building, potentially biasing the data.
+*Looking at green buildings and non-green buildings and their relationship with rent does not account for the other variables that may be truly predicting the relationship between a given building and its rent. As shown in the multiple linear regression and the plot of cluster and rent above, there are many other predictors such as Class of building and Cluster that are statistically siginificant predictors of rent per square foot. 
+*Since whether or not a building is green is not a strong predictor of rent, the analyst's conclusion that the developer could receive an extra $650K a year is incorrect. Further more, the analyst's assertion that the developer could continue to earn an extra $650K for the lifetime of the building is incorrect. From the multiple regression above, we can see that an increase in age of the building results in a statistically significant decrease in rent values. 
+
 
 ## Bootstrapping
 
@@ -232,3 +271,7 @@ In the dataframe above, you can see the 95% confidence intervals for the total w
 ## Market Segmentation
 
 ```{r}
+ms<-read.csv("marketsegmentation.csv")
+
+
+
