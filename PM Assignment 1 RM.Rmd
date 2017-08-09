@@ -131,6 +131,7 @@ sim1 = foreach(i=1:5000, .combine='rbind') %do% {
     holdings = holdings + holdings*return.today #does this redistribute?
     total_wealth = sum(holdings)
     wealthtracker[today] = total_wealth
+    holdings = weights * total_wealth 
   }
   wealthtracker
 }
@@ -160,6 +161,7 @@ sim2 = foreach(i=1:5000, .combine='rbind') %do% {
     holdings = holdings + holdings*return.today
     total_wealth = sum(holdings)
     wealthtracker[today] = total_wealth
+    holdings = weights * total_wealth 
   }
   wealthtracker
 }
@@ -188,6 +190,7 @@ sim3 = foreach(i=1:5000, .combine='rbind') %do% {
     holdings = holdings + holdings*return.today
     total_wealth = sum(holdings)
     wealthtracker[today] = total_wealth
+    holdings = weights * total_wealth 
   }
   wealthtracker
 }
