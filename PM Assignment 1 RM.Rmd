@@ -271,7 +271,90 @@ In the dataframe above, you can see the 95% confidence intervals for the total w
 ## Market Segmentation
 
 ```{r}
-ms<-read.csv("marketsegmentation.csv")
+library(ggplot2)
+library(LICORS)  # for kmeans++
+library(foreach)
+library(mosaic)
+library(tidyr)
+
+ms<-read.csv("social_marketing.csv", header=TRUE)
+ms$X <- NULL
+ms = ms/rowSums(ms)
+# ms[ms == 0] <- NA
+X = ms[,c(-1,-36, -37)] #remove user, spam and adult
+X = scale(X, center=TRUE, scale=TRUE)
+
+set.seed(1)
+ms$cluster <- kmeanspp(X, k=10, nstart=20)$cluster
+
+#See Cluster 7 is Outdoorsy, Personal Fitnessy, Healthy
+health <- gather(data = ms, -health_nutrition, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = health, aes(x = value, y = health_nutrition, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#See Cluster 5, so high cooking, beauty, fashion, photo sharing
+cooking <- gather(data = ms, -cooking, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = cooking, aes(x = value, y = cooking, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 10, high family, parenting, food, religion, school, sports fandom
+parenting <- gather(data = ms, -parenting, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = parenting, aes(x = value, y = parenting, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 4, high online gaming, sports playing, college
+college <- gather(data = ms, -college_uni, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = college, aes(x = value, y = college_uni, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 2, politics, computer, travel, business
+politics <- gather(data = ms, -politics, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = politics, aes(x = value, y = politics, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 1, high chatter, shopping, photo sharing
+shopping<- gather(data = ms, -shopping, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = shopping, aes(x = value, y = shopping, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 3, art and tv/film, current events, crafts
+art<- gather(data = ms, -art, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = art, aes(x = value, y = art, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 8 is high auto, high news, 
+automotive<- gather(data = ms, -automotive, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = automotive, aes(x = value, y = automotive, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 9, high dating, low everything else
+date<- gather(data = ms, -dating, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = date, aes(x = value, y = dating, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 6 hard to parse out
 
 
 
+# clust1 = kmeans(X, 10, nstart=50)
+# #clust2 = kmeans(X, 4, nstart=25)
+# clust1$center
+# 
+# which(clust1$cluster == 1)
+# qplot(, religion, data=ms, color=factor(clust1$cluster))
+# qplot(health_nutrition, food, data=ms, color=factor(clust1$cluster))
+# qplot(parenting, religion, data=ms, color=factor(clust1$cluster))
+# 
+# kset = c(5,10,15)
+# withinss = c()
+# foreach (i = 1:length(kset)) %do% {
+#     cat('doing cluster: k',kset[i],'nstart', 20,'\n')
+#   clust2 = kmeanspp(X, k=kset[i], nstart=20)
+#   withinss = append(withinss,clust2$tot.withinss)
+# }
+# 
+# qplot(health_nutrition, sports_fandom, data=ms, color=factor(clust2$cluster))
+# qplot(parenting, religion, data=ms, color=factor(clust2$cluster))  
+
+
+
+# clust1$withinss
+# clust2$withinss
+# sum(clust1$withinss)
+# sum(clust2$withinss)
+# 
+# names(clust1)
+# clust1$betweenss
+# clust2$betweenss
+```
