@@ -1,6 +1,6 @@
 ---
 title: "PM Assignment 1"
-author: "Dani Diehl"
+author: "Dani Diehl, Gihani D, Chloe Kwon, Jess Chung"
 date: "August 6, 2017"
 output: html_document
 ---
