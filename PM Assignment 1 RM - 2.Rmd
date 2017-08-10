@@ -41,6 +41,7 @@ gb.mean = apply(gb, 2, mean)
 gb.scrubbed.mean = apply(gb.scrubbed, 2, mean)
 gb.scrubbed.mean - gb.mean
 ```
+
 On average, we can see that the removed buildings have on average lower rent, a higher age and are less likely to be close to amenities or be in the nicest Class A of buildings. Higher age and lack of amenities may explain low occupancy rates. For the purposes of our analysis, we will include these low occupancy buildings. 
 
 2.Looking at green buildings and non-green buildings and their relationship with rent without accounting for other variables does show that the green rating variable is significant. Because the coefficient is positive, we might assume that green buildings have higher rents.
@@ -60,6 +61,7 @@ When looking at the output of the regression of Rent on all of the variables in 
 ```{r}
 boxplot(gb$Rent~gb$green_rating, pch=19, col='pink',xlab='Green Rating',ylab='Rent')
 ```
+
 Green buildings have a slightly higher median rent than non-green buildings. However, the range of the rent of green buildings is much smaller than the range of rent of non-green buildings. Non-green buildings seem to have more outliers with very high rent. We must dig deeper into other factors that could be contributing to the difference in rent.
 
 ```{r}
@@ -67,6 +69,7 @@ library(ggplot2)
 t<-ggplot(gb,aes(x=cluster, y=Rent))
 t+geom_point(aes(color=factor(green_rating)))
 ```
+
 By graphing cluster on the x-axis and Rent on the y-axis, we attempt to control for other factors that may be influencing the rent. Clusters were made based on buildings located in the same geographical region. As you can see from the graph, the green buildings (shown in light blue) are not near the top of the rent for each cluster. Green buildings may have higher rent on average, but when limited to clusters, they do not appear to have the highest rent.
 
 3. Since whether or not a building is green is not a strong predictor of rent, the analyst's conclusion that the developer could receive an extra $650K a year is incorrect. Further more, the analyst's assertion that the developer could continue to earn an extra $650K for the lifetime of the building is incorrect. From the multiple regression above, we can see that an increase in age of the building results in a statistically significant decrease in rent values. Also for the purposes of the diagram below, we can see that simple regression also shows that an increase in age results in a decrease in rent. 
@@ -101,7 +104,7 @@ In conclusion, there are several flaws in the analyst's report that primarily st
 1. Characterize risk/return properties of US domestic equities (SPY: the S&P 500 stock index), US Treasury bonds (TLT), Investment-grade corporate bonds (LQD), Emerging-market equities (EEM), and Real estate (VNQ).
 
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(mosaic)
 library(quantmod) #stock info mod
 library(foreach)
@@ -288,7 +291,7 @@ In an ideal world, targeted messaging should be applied to all ten groups for a 
 
 If you would like to see a more detailed representation of these conclusions, please reference the code and outputs themselves.
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(ggplot2)
 library(LICORS)  # for kmeans++
 library(foreach)
