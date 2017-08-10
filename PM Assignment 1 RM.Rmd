@@ -155,7 +155,6 @@ all_returns1 = cbind(	ClCl(SPYa),
                      ClCl(EEMa),
                      ClCl(VNQa))
 all_returns1 = as.matrix(na.omit(all_returns1))
-head(all_returns1)
 
 # Now simulate many different possible scenarios  
 initial_wealth = 100000
@@ -185,7 +184,6 @@ all_returns2 = cbind(	ClCl(SPYa),
                       ClCl(TLTa),
                       ClCl(LQDa))
 all_returns2 = as.matrix(na.omit(all_returns2))
-head(all_returns2)
 
 # Now simulate many different possible scenarios  
 initial_wealth = 100000
@@ -214,7 +212,6 @@ safeVAR=quantile(sim2[,n_days], 0.05) - initial_wealth
 all_returns3 = cbind(ClCl(EEMa),
                       ClCl(VNQa))
 all_returns3 = as.matrix(na.omit(all_returns3))
-head(all_returns3)
 
 # Now simulate many different possible scenarios  
 initial_wealth = 100000
