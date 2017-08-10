@@ -1,8 +1,8 @@
 ---
 title: "PM Assignment 1"
-author: "Dani Diehl, Gihani D, Chloe Kwon, Jess Chung"
+author: "Dani Diehl, Gihani Dissanayake, Chloe Kwon, Jess Chung"
 date: "August 6, 2017"
-output: html_document
+output: github_document 
 ---
 
 ```{r setup, include=FALSE}
@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ![Part A](/Users/danid/Pictures/ProbPracticePartA.jpg)
 
 As shown by the math above, the fraction of people who are truthful clickers and answered "Yes" is 5/7. 
+
 ### Part B
 
 ![Part A](/Users/danid/Pictures/ProbPracticePartB.jpg)
@@ -84,9 +85,12 @@ coef(age.lm)
 ```{r}
 library(ggplot2)
 ggplot(gb,aes(x=leasing_rate))+geom_histogram(breaks=seq(20, 100, by=5), aes(color=factor(green_rating)))+ facet_wrap(~green_rating)
-cat("Number of green buildings:",count(gb$green_rating==1),"\n")
-cat("Number of green buildings with less than 90% occupancy:",count(gb$leasing_rate<90 & gb$green_rating==1),"\n")
-cat("Percentage of green buildings with less than 90% occupancy:", count(gb$leasing_rate<90 & gb$green_rating==1)/count(gb$green_rating==1))
+numgreen = sum(gb$green_rating==1)
+cat("Number of green buildings:",numgreen,"\n")
+numless90 = sum(gb$leasing_rate<90 & gb$green_rating==1)
+cat("Number of green buildings with less than 90% occupancy:",numless90,"\n")
+numgreenless90 = sum(gb$leasing_rate<90 & gb$green_rating==1)/sum(gb$green_rating==1)
+cat("Percentage of green buildings with less than 90% occupancy:", numgreenless90)
 ```
 
 
@@ -176,7 +180,6 @@ sim1 = foreach(i=1:5000, .combine='rbind') %do% {
     total_wealth = sum(holdings)
     wealthtracker[today] = total_wealth
     holdings = weights * total_wealth 
-    holdingstracker[today] = holdings
   }
   wealthtracker
 }
@@ -269,7 +272,21 @@ df3
 ```
 In the dataframe above, you can see the 95% confidence intervals for the total wealth one is expected to have after investing $100,000 into the equal, safe, and aggressive portfolios for 20 trading days. The 95% confidence interval for the equal split porfolio is [89597, 112218]. The 95% confidence interval for the safe portfolio is [95967, 105077]. The 95% confidence interval for the aggressive portfolio is [71764,131301]. Readers will be able to look at this information, see the potential for both loss and gain in each portfolio, and make a decision based on these facts. By computing the expected gain, expected standard deviation, and 95% confidence interval, readers will have a good idea about the risk-reward tradeoff for each portfolio.
 
+
 ## Market Segmentation
+
+We grouped the types of tweets into 10 clusters, which we found to be the optimal representation of all the different categories of tweets that are worth considering. We evaluated all users equally, because we didn't want the effect of people who tweet every minute about something to outweigh the users who tweet more infrequently. This also makes targeting users more accurately in the future.
+However, not all clusters are created equally. By observing correlations between all the variables as well as running cluster analysis using kmeans with k=10, we identified 10 clusters that represented similar interests within user groups. Amongst the 10 aforementioned clusters, we found the following three to be the most strongly correlated and therefore are our top recommendations for applying market segmentation and targeted messaging. 
+
+A. personal_fitness, health_nutrition, and outdoors
+B. college_uni, online_gaming, sports_playing, 
+C. fashion, cooking, beauty, and pictures
+
+These three groups are are our top recommendations for applying market segmentation and targeted messaging. In an ideal world, targeted messaging should be applied to all ten groups for a maximum effect, but given resource constrains, narrowing the focus to a few groups might be preferred.
+
+In an ideal world, targeted messaging should be applied to all ten groups for a maximum effect, but given resource constrains, narrowing the focus to a few groups might be preferred. Given a user whose tweets typically fall into one of these clusters, we think they would best respond to messaging that is also similar to the contest in that cluster. For example, if there is a twitter user who often tweets about the outdoors and nutrition, we expect them to respond positively to messaging about personal fitness, health, or the outdoors.
+
+If you would like to see a more detailed representation of these conclusions, please reference the code and outputs themselves.
 
 ```{r}
 library(ggplot2)
@@ -277,6 +294,7 @@ library(LICORS)  # for kmeans++
 library(foreach)
 library(mosaic)
 library(tidyr)
+library(cluster)
 
 ms<-read.csv("social_marketing.csv", header=TRUE)
 ms$X <- NULL
@@ -285,6 +303,18 @@ ms$adult <- NULL
 ms = ms/rowSums(ms)
 X = scale(ms, center=TRUE, scale=TRUE)
 
+#Observe correlations to determine intuitive pairs of categories to find segments of population
+x = cor(ms)
+#fix(x)
+x[x == 1] = 0
+#to get rid of cookingvscooking correlations
+xdf = as.data.frame(as.table(x))
+highcor = subset(xdf, Freq > 0.5)
+head(highcor)
+#can change to .5 to narrow to top 3 pairs
+#None have a strong neg correlation but I did consider it
+
+#Find the ideal number of clusters
 k.max = 25
 data <- X
 sil <- rep(0, k.max)
@@ -303,46 +333,49 @@ plot(1:k.max, sil, type = "b", pch = 19,
 abline(v = which.max(sil), lty = 2)
 which.max(sil) #Max is 10
 
-set.seed(1)
-ms$cluster <- kmeanspp(X, k=which.max(sil), nstart=20)$cluster #using max of 10
 
-#cluster 1, high chatter, shopping, photo sharing
+#Cluster data with 10 clusters
+set.seed(1)
+ms$cluster <- kmeanspp(X, k=10, nstart=20)$cluster #using max of 10
+
+#Cluster 1 is Outdoors, Personal Fitness, Health
+health <- gather(data = ms, -health_nutrition,  -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = health, aes(x = value, y = health_nutrition, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 2, high family, parenting, food, religion, school, sports fandom
+parenting <- gather(data = ms, -parenting,  -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = parenting, aes(x = value, y = parenting, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 3, politics, computer, travel, business
+politics <- gather(data = ms, -politics, -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = politics, aes(x = value, y = politics, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 4, high online gaming, sports playing, college
+college <- gather(data = ms, -college_uni,  -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = college, aes(x = value, y = college_uni, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 5, art and tv/film, current events, crafts
+art<- gather(data = ms, -art,  -uncategorized, -cluster, key = "var", value = "value")
+ggplot(data = art, aes(x = value, y = art, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
+
+#cluster 6, high chatter, shopping, photo sharing
 shopping<- gather(data = ms, -shopping,  -uncategorized, -cluster, key = "var", value = "value")
 ggplot(data = shopping, aes(x = value, y = shopping, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
 
-#cluster 2, politics, computer, travel, business
-politics <- gather(data = ms, -politics, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
-ggplot(data = politics, aes(x = value, y = politics, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
-
-#cluster 3, art and tv/film, current events, crafts
-art<- gather(data = ms, -art, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
-ggplot(data = art, aes(x = value, y = art, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
-
-#cluster 4, high online gaming, sports playing, college
-college <- gather(data = ms, -college_uni, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
-ggplot(data = college, aes(x = value, y = college_uni, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
-
-#Cluster 5, cooking, beauty, fashion, photo sharing
-cooking <- gather(data = ms, -cooking, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+#Cluster 7, cooking, beauty, fashion, photo sharing
+cooking <- gather(data = ms, -cooking,  -uncategorized, -cluster, key = "var", value = "value")
 ggplot(data = cooking, aes(x = value, y = cooking, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
 
-#cluster 6 hard to parse out
+#cluster 8 hard to parse out
 
-#Cluster 7 is Outdoors, Personal Fitness, Healthy
-health <- gather(data = ms, -health_nutrition, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
-ggplot(data = health, aes(x = value, y = health_nutrition, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
-
-#cluster 8 is high auto, high news, 
-automotive<- gather(data = ms, -automotive, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+#cluster 9 is high auto, high news, 
+automotive<- gather(data = ms, -automotive,  -uncategorized, -cluster, key = "var", value = "value")
 ggplot(data = automotive, aes(x = value, y = automotive, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
 
-#cluster 9, high dating, low everything else
-date<- gather(data = ms, -dating, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
+#cluster 10, high dating, low everything else
+date<- gather(data = ms, -dating,  -uncategorized, -cluster, key = "var", value = "value")
 ggplot(data = date, aes(x = value, y = dating, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
 
-#cluster 10, high family, parenting, food, religion, school, sports fandom
-parenting <- gather(data = ms, -parenting, -adult, -spam, -uncategorized, -cluster, key = "var", value = "value")
-ggplot(data = parenting, aes(x = value, y = parenting, color = factor(cluster))) + geom_point() + facet_wrap(~ var, scales = "free")
 
 
 ```
