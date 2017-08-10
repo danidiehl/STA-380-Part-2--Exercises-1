@@ -242,27 +242,25 @@ In the dataframe labeled df2, you can see the value at risk at the 5% level for 
 
 ```{r}
 
-s1d=sd(sim1[,n_days]) #sd of values at the end of the 20 days
-mean1=mean(sim1[,n_days]) #100800.4
+sd1=sd(sim1[,n_days]) #5655.20
+mean1=mean(sim1[,n_days]) #100907.62
 
 equal_confint= range(mean1-2*sd1, mean1+2*sd1)
 
-sd2=sd(sim2[,n_days]) #sd of values at the end of the 20 days
-sd2 #2295.886 (smaller than sd1--less range) 
-mean2=mean(sim2[,n_days]) #100551 (less than mean1)
+sd2=sd(sim2[,n_days]) #2277.48 (smaller than sd1--less range) 
+mean2=mean(sim2[,n_days]) #100522 (less than mean1)
 safe_confint= range(mean2-2*sd2,mean2+2*sd2)
 
 
-sd3=sd(sim3[,n_days]) #sd of values at the end of the 20 days
-sd3 #14927 (much bigger variation) 
-mean3=mean(sim3[,n_days]) #101817 (much more than others)
+sd3=sd(sim3[,n_days]) #14884 (much bigger variation) 
+mean3=mean(sim3[,n_days]) #101533 (much more than others)
 agg_confint=range(mean3-2*sd3, mean3+2*sd3)
 
 df3<-rbind(equal_confint,safe_confint,agg_confint)
 df3
 
 ```
-In the dataframe above, you can see the 95% confidence intervals for the total wealth one is expected to have after investing $100,000 into the equal, safe, and aggressive portfolios for 20 trading days. Readers will be able to look at this dataframe, see the potential for both loss and gain in each portfolio, and make a decision based on these facts. By computing the expected gain, expected standard deviation, and 95% confidence interval, readers will have a good idea about the risk-reward tradeoff for each portfolio.
+In the dataframe above, you can see the 95% confidence intervals for the total wealth one is expected to have after investing $100,000 into the equal, safe, and aggressive portfolios for 20 trading days. The 95% confidence interval for the equal split porfolio is [89597, 112218]. The 95% confidence interval for the safe portfolio is [95967, 105077]. The 95% confidence interval for the aggressive portfolio is [71764,131301]. Readers will be able to look at this information, see the potential for both loss and gain in each portfolio, and make a decision based on these facts. By computing the expected gain, expected standard deviation, and 95% confidence interval, readers will have a good idea about the risk-reward tradeoff for each portfolio.
 
 
 ## Market Segmentation
