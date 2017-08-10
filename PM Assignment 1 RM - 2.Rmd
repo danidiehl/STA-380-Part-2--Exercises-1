@@ -101,7 +101,7 @@ In conclusion, there are several flaws in the analyst's report that primarily st
 1. Characterize risk/return properties of US domestic equities (SPY: the S&P 500 stock index), US Treasury bonds (TLT), Investment-grade corporate bonds (LQD), Emerging-market equities (EEM), and Real estate (VNQ).
 
 
-```{r}
+```{r message=FALSE}
 library(mosaic)
 library(quantmod) #stock info mod
 library(foreach)
@@ -278,9 +278,9 @@ In the dataframe above, you can see the 95% confidence intervals for the total w
 We grouped the types of tweets into 10 clusters, which we found to be the optimal representation of all the different categories of tweets that are worth considering. We evaluated all users equally, because we didn't want the effect of people who tweet every minute about something to outweigh the users who tweet more infrequently. This also makes targeting users more accurately in the future.
 However, not all clusters are created equally. By observing correlations between all the variables as well as running cluster analysis using kmeans with k=10, we identified 10 clusters that represented similar interests within user groups. Amongst the 10 aforementioned clusters, we found the following three to be the most strongly correlated and therefore are our top recommendations for applying market segmentation and targeted messaging. 
 
-A. personal_fitness, health_nutrition, and outdoors
-B. college_uni, online_gaming, sports_playing, 
-C. fashion, cooking, beauty, and pictures
+1. personal_fitness, health_nutrition, and outdoors
+2. college_uni, online_gaming, sports_playing, 
+3. fashion, cooking, beauty, and pictures
 
 These three groups are are our top recommendations for applying market segmentation and targeted messaging. In an ideal world, targeted messaging should be applied to all ten groups for a maximum effect, but given resource constrains, narrowing the focus to a few groups might be preferred.
 
@@ -288,7 +288,7 @@ In an ideal world, targeted messaging should be applied to all ten groups for a 
 
 If you would like to see a more detailed representation of these conclusions, please reference the code and outputs themselves.
 
-```{r}
+```{r message=FALSE}
 library(ggplot2)
 library(LICORS)  # for kmeans++
 library(foreach)
@@ -322,7 +322,6 @@ sil <- rep(0, k.max)
 set.seed(1)
 
 for(i in 2:k.max) {
-  cat("computing cluster for centers =",i,"\n")
   km.res <- kmeanspp(data, k = i, nstart = 20)
   ss <- silhouette(km.res$cluster, dist(data))
   sil[i] <- mean(ss[, 3])
