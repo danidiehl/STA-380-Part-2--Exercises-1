@@ -269,6 +269,7 @@ df3
 ```
 In the dataframe above, you can see the 95% confidence intervals for the total wealth one is expected to have after investing $100,000 into the equal, safe, and aggressive portfolios for 20 trading days. The 95% confidence interval for the equal split porfolio is [89597, 112218]. The 95% confidence interval for the safe portfolio is [95967, 105077]. The 95% confidence interval for the aggressive portfolio is [71764,131301]. Readers will be able to look at this information, see the potential for both loss and gain in each portfolio, and make a decision based on these facts. By computing the expected gain, expected standard deviation, and 95% confidence interval, readers will have a good idea about the risk-reward tradeoff for each portfolio.
 
+
 ## Market Segmentation
 
 ```{r}
