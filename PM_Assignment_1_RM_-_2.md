@@ -8,13 +8,13 @@ Probability Practice
 
 ### Part A
 
-![Part A](/Users/danid/Pictures/ProbPracticePartA.jpg)
+![alt text](https://raw.githubusercontent.com/danidiehl/STA-380-Part-2--Exercises-1/master/ProbPracticePartA.jpg)
 
 As shown by the math above, the fraction of people who are truthful clickers and answered "Yes" is 5/7.
 
 ### Part B
 
-![Part A](/Users/danid/Pictures/ProbPracticePartB.jpg)
+![alt text](https://raw.githubusercontent.com/danidiehl/STA-380-Part-2--Exercises-1/master/ProbPracticePartB.jpg)
 
 As shown by the math above, the probability of having the disease after testing positive is 19.9%. This means the test is not a particularly good indicator of having the disease and that the test is giving a lot of False Positives. If a universal testing policy were implemented, additional screening and testing would need to be done on those who tested positive to further confirm whether or not they have the disease.
 
@@ -427,15 +427,15 @@ In the dataframe above, you can see the 95% confidence intervals for the total w
 Market Segmentation
 -------------------
 
-We grouped the types of tweets into 10 clusters, which we found to be the optimal representation of all the different categories of tweets that are worth considering. We evaluated all users equally, because we didn't want the effect of people who tweet every minute about something to outweigh the users who tweet more infrequently. This also makes targeting users more accurately in the future. However, not all clusters are created equally. By observing correlations between all the variables as well as running cluster analysis using kmeans with k=10, we identified 10 clusters that represented similar interests within user groups. Amongst the 10 aforementioned clusters, we found the following three to be the most strongly correlated and therefore are our top recommendations for applying market segmentation and targeted messaging.
+We grouped the types of tweets into ten clusters, which we found to be the optimal representation of all the different categories of tweets that are worth considering. We evaluated all users equally, because we didn't want the effect of everyday tweeters to outweigh the users who tweet more infrequently. This also makes targeting users more accurate in the future. However, not all clusters are created equally. By observing correlations between all the variables as well as running cluster analysis using kmeans with k=10, we identified ten clusters that represented similar interests within user groups. Amongst the ten aforementioned clusters, we found the following three to be the most strongly correlated and therefore are our top recommendations for applying market segmentation and targeted messaging.
 
-1.  personal\_fitness, health\_nutrition, and outdoors
-2.  college\_uni, online\_gaming, sports\_playing,
+1.  personal_fitness, health_nutrition, and outdoors
+2.  college_uni, online_gaming, and sports_playing
 3.  fashion, cooking, beauty, and pictures
 
-These three groups are are our top recommendations for applying market segmentation and targeted messaging. In an ideal world, targeted messaging should be applied to all ten groups for a maximum effect, but given resource constrains, narrowing the focus to a few groups might be preferred.
+These three groups are are our top recommendations for applying market segmentation. In an ideal world, targeted messaging should be applied to all ten groups for a maximum effect, but given resource constrains, narrowing the scope to a few groups might be preferred.
 
-In an ideal world, targeted messaging should be applied to all ten groups for a maximum effect, but given resource constrains, narrowing the focus to a few groups might be preferred. Given a user whose tweets typically fall into one of these clusters, we think they would best respond to messaging that is also similar to the contest in that cluster. For example, if there is a twitter user who often tweets about the outdoors and nutrition, we expect them to respond positively to messaging about personal fitness, health, or the outdoors.
+Given a user whose tweets typically fall into one of these clusters, we think they would best respond to messaging that is also related to topics in that cluster. For example, if there is a twitter user who often tweets about the outdoors and healthy living, we expect them to respond positively to messaging about personal fitness, health, or the outdoors.
 
 If you would like to see a more detailed representation of these conclusions, please reference the code and outputs themselves.
 
